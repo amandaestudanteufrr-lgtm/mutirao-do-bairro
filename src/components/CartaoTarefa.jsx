@@ -1,4 +1,4 @@
-export default function CartaoTarefa({ titulo, categoria, voluntarios, concluida }) {
+export default function CartaoTarefa({ id, titulo, categoria, voluntarios, concluida, onShowDetails }) {
   return (
     <article className={`cartao-tarefa ${concluida ? "is-complete" : ""}`}>
       <div>
@@ -7,6 +7,9 @@ export default function CartaoTarefa({ titulo, categoria, voluntarios, concluida
         <p>Voluntários: {voluntarios}</p>
       </div>
       <span>{concluida ? "Concluída" : "Pendente"}</span>
+      <button type="button" onClick={() => onShowDetails(id)}>
+        Ver detalhes
+      </button>
     </article>
   );
 }
