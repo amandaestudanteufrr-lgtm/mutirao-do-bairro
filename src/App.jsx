@@ -1,23 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import Painel from "./components/Painel";
 import ListaTarefas from "./components/ListaTarefas";
 import { tarefasIniciais } from "./data/tarefas";
 import FormularioTarefa from "./components/FormularioTarefa";
 
+const CHAVE_STORAGE = "mutirao_tarefas";
+
 export default function App() {
-  const [tarefas, setTarefas] = useState(tarefasIniciais);
+  const [tarefas, setTarefas] = useState(() => {
+    try {
+      const dadosSalvos = localStorage.getItem(CHAVE_STORAGE);
+      return dadosSalvos ? JSON.parse(dadosSalvos) : tarefasIniciais;
+    } catch {
+      return tarefasIniciais;
+    }
+  });
 
   const totalConcluidas = tarefas.filter((t) => t.concluida).length;
+  const totalPendentes = tarefas.filter((t) => !t.concluida).length;
+
+  useEffect(() => {
+    localStorage.setItem(CHAVE_STORAGE, JSON.stringify(tarefas));
+  }, [tarefas]);
+
+  useEffect(() => {
+    document.title = `Mutirão (${totalPendentes} pendentes)`;
+  }, [totalPendentes]);
 
   function handleToggle(id) {
     setTarefas(
       tarefas.map((t) => (t.id === id ? { ...t, concluida: !t.concluida } : t))
     );
   }
+
   function handleAdicionarTarefa(novaTarefa) {
     setTarefas([...tarefas, novaTarefa]);
   }
+
   function handleDelete(id) {
     setTarefas(tarefas.filter((t) => t.id !== id));
   }
@@ -28,6 +48,7 @@ export default function App() {
       window.alert(`${tarefa.titulo} | Voluntários: ${tarefa.voluntarios}`);
     }
   }
+
   return (
     <main className="app">
       <header className="hero">
@@ -47,6 +68,7 @@ export default function App() {
           onDelete={handleDelete}
         />
       </Painel>
+
       <Painel title="Cadastrar Nova Tarefa">
         <FormularioTarefa onAdicionarTarefa={handleAdicionarTarefa} />
       </Painel>
