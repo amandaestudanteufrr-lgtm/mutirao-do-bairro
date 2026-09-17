@@ -3,6 +3,7 @@ import "./App.css";
 import Painel from "./components/Painel";
 import ListaTarefas from "./components/ListaTarefas";
 import { tarefasIniciais } from "./data/tarefas";
+import FormularioTarefa from "./components/FormularioTarefa";
 
 export default function App() {
   const [tarefas, setTarefas] = useState(tarefasIniciais);
@@ -14,7 +15,9 @@ export default function App() {
       tarefas.map((t) => (t.id === id ? { ...t, concluida: !t.concluida } : t))
     );
   }
-
+  function handleAdicionarTarefa(novaTarefa) {
+    setTarefas([...tarefas, novaTarefa]);
+  }
   function handleDelete(id) {
     setTarefas(tarefas.filter((t) => t.id !== id));
   }
@@ -43,6 +46,9 @@ export default function App() {
           onToggle={handleToggle}
           onDelete={handleDelete}
         />
+      </Painel>
+      <Painel title="Cadastrar Nova Tarefa">
+        <FormularioTarefa onAdicionarTarefa={handleAdicionarTarefa} />
       </Painel>
     </main>
   );
